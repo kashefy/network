@@ -53,6 +53,9 @@ class Network(object):
             for mini_batch in mini_batches:
                 
                 self.update_mini_batch(mini_batch, eta)
+                #~ print("j=:", j)
+                #~ print("biases:", self.biases)
+                #~ print("weights:", self.weights)
                 
             if test_data:
                 
@@ -62,6 +65,11 @@ class Network(object):
             else:
                 print "Epoch {0} complete".format(j)
                 
+        print("biases:", self.biases)
+        print("weights:", self.weights)
+        print("# non zeros:", np.count_nonzero(self.weights!=0.))
+        print("non zeros:", self.weights[self.weights!=0.])
+
     def update_mini_batch(self, mini_batch, eta):
         """
         Update the network's weights and biases by applying
@@ -104,7 +112,7 @@ class Network(object):
             zs.append(z)
             activation = sigmoid_vec(z)
             activations.append(activation)
-        
+        #~ print("y=", activations[-1])
         # backward pass
         delta = self.cost_derivative(activations[-1], y) * \
             sigmoid_prime_vec(zs[-1])
@@ -160,6 +168,8 @@ class Network(object):
         '''
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x) 
+        self.biases = [np.random.randn(y, 1)*0. for y in sizes[1:]]
+        self.weights = [np.random.randn(y, x)*0. 
                         for x, y in zip(sizes[:-1], sizes[1:])]
+        self.weights = np.absolute(self.weights)
+        self.biases = np.absolute(self.biases)
